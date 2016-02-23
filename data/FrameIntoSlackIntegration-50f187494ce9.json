@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "frameintoslackintegration",
+  "private_key_id": "50f187494ce92cce33600f100800587f4e95a8ef",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCIpZXx0vHkLOo9\nmYeoAqy9nyk1Sdvlw0auPBSn6xZNS6TAr3fzQTxlwCmQOe3CtjESBN0PKTlY+Lv7\nCGZrZJf7pnZP96y+9ai4UdCwfVouWDr1UW7QE+n937rNRO/siJaGB+CCYKkkwSpv\nFpkpZ+xrqZ7aTp2N419RF0OFub74+8IlLwEDHhgmZ2tyaS1oX3HYAj9fUJeSy263\nQ7+YLBzzMY36jFN5147oogSO6na9h6GjAqvM0oM/fh5ZnB/pLdZQv1dALCxOprc+\nyHQkEbzbO6/kH6rkcjZNnT53evB5CtJffWQxjHGz+8rIPKRZzu5yvwQoqwj+sgd7\nevhDqlSXAgMBAAECggEAZEG5ZhfzSgp6Qn/mvCpaOzYPsf1izY0cyrFiJmGhl0ys\nsIMNaviuK6l11U/rVjT+g831sy332YOFyIU9QAYqTISxwbJimCj9hV7h0tvl0qMB\nfwQkXZ5+y7nfAMRXlCAS8HvPCVmKQGFJlP/rmCmbmNJ2ro2Ho5bzVDfRXsgNifd5\nuxJMSsMPNxghc3okx0D3Blu4svx0/e/oHh/jL15bWzLMhEMiN4QYbM455Qlyv2jy\nIuW+F6TG2HWEHsv9jyEZUZBggeVScYBKw7cvaOY49jEcwQ8UOHkpojA+xODw8Wsn\n8JExLZXv8qxkXxjImZ9ZVVk0khWcF63wl9dCPaeeYQKBgQDM+iXERGeHcJ1B2UqL\nAjvEMnQ0JTDDCsdfctW3o4rbULgH3T9p7S09kdiphTkiUT0Q8wB4bN4vvjO+q26a\nw00rYvjjdWfYiHcCTsIpklOIKgv6KAmsG/aVFQbQjDbU/aj5u49GVbl1C0vl3kWx\nIVWYldkN5SO+11LSO2gfpxy8nQKBgQCqqTGeNh+mnL++7Z/mbrZf8OK+So8J0pcD\nScD45zn6LZcl8kjEhdaXskgYbX1TcFbS0Ancq9EnM+CdScmeTaT+ZSxXzAN9VDzj\nPDYl8Itcuf3s4UUNgEgq0YExLTi0Sjr5RHQv94OF7hxGY4Q1X+of+umHjKBSfrex\nE9I5CQZ9wwKBgQCQdpiZfBBvP2pF14wW7qsKuvh1K+TzAazEU53WgFfD/F7HhCJG\nWJdy9lB6IV/EFPdx86HYPfpWMbosXoxkXNMNigKZ5MwcqwkdQj7Lp8phhCjO1NsE\nRu0B40DbSIb4lBI8d/khfBdqK10BlCcQEMtP8AR7K4yG2yEO9DmNXWz+bQKBgQCK\ns5gwDa0LrLnqYxZiIfj3YL/oCJDYWt+BPKApq0PjoMoHfTLHBj+yaqNNty70cYkf\nLRXW043ZXsBfFWlXz6MZXwD7GkR7x8r0pCseCrI5WrCVpUCKCIiexEdLwIUlgm8L\nyCbmFTQ/1ZYFXzxEZP/TngnOsOxcH8ELmiBxWnR8IQKBgQDJa/6B77aMq7AM3bD0\nWEq7X1WkF7XteeUO8gyah9WKtnuq5UkGOE3kF1qv/6u0DKU0E0PICzQtNTpgJ6/3\nmvAlQ5HNWUfo1bE6dxOKpKNvykp2GzdXgpX2vczgtkBAMMfoFCiw46TO7DuKGshn\nRmwLhzDUWI5YR9IZdXYFmrUnCA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "frameintoslackintegration@appspot.gserviceaccount.com",
+  "client_id": "117720980544910808182",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/frameintoslackintegration%40appspot.gserviceaccount.com"
+}

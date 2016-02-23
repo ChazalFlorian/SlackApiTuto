@@ -1,0 +1,6 @@
+//example of complete request to SlackWebHook
+//get rid of the linespaces when using it
+
+curl -X POST --data-urlencode
+'payload={"channel": "#general", "username": "webhookbot", "text": "This is posted to #general and comes from a bot named webhookbot.", "icon_emoji": ":ghost:"}'
+https://hooks.slack.com/services/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
