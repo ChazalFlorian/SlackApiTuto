@@ -18,6 +18,7 @@ var readline = require('readline');
 var request = require('request');
 var express = require('express');
 var jade = require('jade');
+var bodyParser = require('body-parser');
 var $ = require('jquery');
 
 var google = require('googleapis');
@@ -26,6 +27,8 @@ var plus = google.plus('v1');
 //var userinfo = google.userinfo;
 var user_Gmail = 'chazal.florian.blz@gmail.com';
 var app = express();
+app.use(bodyParser.urlencoded({ extended : true }));
+app.use(express.static(__dirname));
 
 // Client ID and client secret are available at
 // https://code.google.com/apis/console
@@ -141,26 +144,47 @@ function uploadFiles(){
 
 }
 
-// retrieve an access token
-//getAccessToken(oauth2Client, function(url) {
-    // retrieve user profile
-//    plus.people.get({ userId: 'me', auth: oauth2Client }, function(err, profile) {
-//        if (err) {
-//            console.log('An error occured', err);
-//            return;
-//        }
-//        console.log(profile.displayName, ':', profile.tagline);
-//    });
-//});
+function checkUser($mail, callback){
+    request({
+        method: 'POST',
+        url: 'https://api.frame.io/users/check_elegible',
+        headers: {
+            'Content-Type': 'application/json'
+            },
+        body: "{  \"email\": \""+$mail+"\"}"
+        }, function (error, response, body) {
+        body = JSON.parse(body);
+        callback(body['action_key']);
+    })
+}
 
 app.get('/', function(req, res){
     var AuthUrl = "";
     getAuthUrlToken(oauth2Client, function(url) {
         AuthUrl = url;
     });
+    res.sendFile(__dirname + "/templates/index.html");
+});
+
+app.post('/email', function(req, res){
+    var email = req.body.email;
     res.writeHead(200, {"Content-Type": "text/html"});
-    res.write("<span>Welcome Home!</span>" +
-        "Valid Token Demand at <a href=\""+AuthUrl+"\">Here !</a>");
+
+    checkUser(email, function(status){
+        try{
+            if(status == "user-google"){
+                res.write("<p>Google utilisateur</p>");
+            }else if(status == 'user-non-google'){
+                res.write("<p>non google utilisateur</p>");
+            }else if (status == 'user-eligible'){
+                res.write("<p>non inscrit</p>");
+            }else{
+                throw new Error("An error occured while submitting the Email")
+            }
+        }catch(e){
+            console.log(e.name + ' ' + e.message);
+        }
+    });
 });
 
 app.get('/oauth/token', function(req, res, body){
