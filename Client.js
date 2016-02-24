@@ -20,15 +20,24 @@ var express = require('express');
 var jade = require('jade');
 var bodyParser = require('body-parser');
 var $ = require('jquery');
+var jsdom = require('jsdom');
 
 var google = require('googleapis');
 var OAuth2Client = google.auth.OAuth2;
 var plus = google.plus('v1');
 //var userinfo = google.userinfo;
-var user_Gmail = 'chazal.florian.blz@gmail.com';
+var user_Gmail = 'chazal.florian@gmail.com';
 var app = express();
 app.use(bodyParser.urlencoded({ extended : true }));
 app.use(express.static(__dirname));
+jsdom.env("http://localhost:3000/*", function(err, window) {
+    if (err) {
+        console.error(err);
+        return;
+    }
+
+    var $ = require("jquery")(window);
+});
 
 // Client ID and client secret are available at
 // https://code.google.com/apis/console
@@ -37,6 +46,8 @@ var CLIENT_SECRET = 'z1U__w3_kWa9QX6FyWJVZAdV';
 var REDIRECT_URL = 'http://localhost:3000/oAuth/token';
 var user_id = "";
 var user_token = "";
+var frameURL= "http://frame.io/?p=HxRKBtbH";
+var userData = "";
 
 var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 
@@ -56,14 +67,11 @@ function getAuthUrlToken(oauth2Client, callback) {
             'email'
             ] // can be a space-delimited string or an array of scopes
     });
-    console.log('Visit the url: ', url);
     callback(url);
 }
 
 function getAccessToken(code){
         oauth2Client.getToken(code, function(err, tokens) {
-            //console.log(code);
-            console.log(tokens.access_token);
             // set tokens to the client
             // TODO: tokens should be set by OAuth2 client.
             oauth2Client.setCredentials(tokens);
@@ -99,9 +107,10 @@ function getUserInfosFromFrame(user_id, user_token){
         },
         body: "{\"mid\": \""+user_id+"\", \"t\": \""+user_token+"\"}"
     }, function(req, res, body){
-        console.log("Status:", res.statusCode);
-        console.log("Headers:", JSON.stringify(res.headers));
-        console.log("Response:", body);
+        //console.log("Status:", res.statusCode);
+        //console.log("Headers:", JSON.stringify(res.headers));
+        //console.log("Response:", body);
+        userData = body;
     });
 }
 
@@ -124,8 +133,8 @@ function commentSubject(fileId, appUrl, user_id, user_token, projectId, comments
         "\"comments\": "+comments +
         "}"
     }, function(req, res, body){
-        console.log('Status:', res.statusCode);
-        console.log('Headers:', JSON.stringify(res.headers));
+        //console.log('Status:', res.statusCode);
+        //console.log('Headers:', JSON.stringify(res.headers));
         console.log('Response:', body);
     })
 }
@@ -136,8 +145,53 @@ function createFolder(){
     })
 }
 
-function addProject(){
+function addCollaborator(projectId, collabMail, collabId){
+    if(collabId !== 'undefined'){
+        var body = "{\"t\": \""+user_token+"\", \"mid\": \""+user_id+"\", \"pid\": \""+projectId+"\", \"emails\": \""+collabMail+"\", \"cids\": \""+collabId+"\", \"client\": \""+frameURL+"\"}";
+    }else{
+        var body = "{\"t\": \""+user_token+"\", \"mid\": \""+user_id+"\", \"pid\": \""+projectId+"\", \"emails\": \""+collabMail+"\", \"client\": \""+frameURL+"\"}"
+    }
+    request({
+        method: 'POST',
+        url: 'https://api.frame.io/projects/share',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: body
+    },function(err, response, body){
+        console.log('Status:', response.statusCode);
+        console.log('Headers:', JSON.stringify(response.headers));
+        console.log('Response:', body);
+    })
+}
 
+function addProject(projectName){
+
+}
+
+function addTeam(teamName, callback){
+    localResponse = "";
+    console.log(teamName);
+    console.log(user_id);
+    console.log(user_token);
+    request({
+        method: 'POST',
+        url: 'https://api.frame.io/users/'+user_id+'/teams/create',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: "{\"name\": \""+teamName+"\", \"mid\": \""+user_id+"\", \"t\": \""+user_token+"\"}"
+    }, function(error, response, body){
+        localResponse = response;
+        console.log('Status:', response.statusCode);
+        console.log('Headers:', JSON.stringify(response.headers));
+        console.log('Response:', body);
+    });
+    if(localResponse.statusCode == "200"){
+        callback(true);
+    }else{
+        callback(false);
+    }
 }
 
 function uploadFiles(){
@@ -159,21 +213,21 @@ function checkUser($mail, callback){
 }
 
 app.get('/', function(req, res){
-    var AuthUrl = "";
-    getAuthUrlToken(oauth2Client, function(url) {
-        AuthUrl = url;
-    });
     res.sendFile(__dirname + "/templates/index.html");
 });
 
 app.post('/email', function(req, res){
     var email = req.body.email;
-    res.writeHead(200, {"Content-Type": "text/html"});
+    var AuthUrl = "";
 
     checkUser(email, function(status){
         try{
             if(status == "user-google"){
                 res.write("<p>Google utilisateur</p>");
+                getAuthUrlToken(oauth2Client, function(url) {
+                    AuthUrl = url;
+                });
+                res.redirect(AuthUrl);
             }else if(status == 'user-non-google'){
                 res.write("<p>non google utilisateur</p>");
             }else if (status == 'user-eligible'){
@@ -188,10 +242,10 @@ app.post('/email', function(req, res){
 });
 
 app.get('/oauth/token', function(req, res, body){
-    res.writeHead(200, {"Content-Type": "text/html"});
+    //res.writeHead(200, {"Content-Type": "text/html"});
     //console.log(req.query['code']);
     getAccessToken(req.query['code']);
-    res.write("<span>Vous allez etre redirigé d'ici quelques instants</span>");
+    //res.write("<span>Vous allez etre redirigé d'ici quelques instants</span>");
     res.redirect('/app');
 });
 
@@ -199,12 +253,69 @@ app.get('/oauth/token', function(req, res, body){
 app.get('/app', function(req, res, body){
    res.writeHead(200, {'Content-Type': "text/html"});
     res.write("<div>" +
+        "<p><a href=\"/app/addCollaborator\">Ajouter un Collaborateur</a></p>" +
+        "<p><a href=\"/app/addTeam\">Ajouter une equipe</a></p>" +
         "<p><a name=\"addProject\">Ajouter un projet</a></p>" +
         "<p><a name=\"commentSubject\"> commenter</a></p>" +
         "<p><a name=\"createFolder\"> créer un dossier</a></p>" +
         "<p><a name=\"createProject\">créer un projet</a></p>" +
-        "<p><a name=\"uploadFiles\">uploader un ficheri</a></p>" +
+        "<p><a name=\"uploadFiles\">uploader un fichier</a></p>" +
         "</div>");
+    res.send();
+});
+
+app.get('/app/addTeam', function(req, res, body){
+    addTeam('test', function(status){
+        console.log(status);
+        //if(status === true){
+       //     res.write("<div>Team Crée!</div>");
+       //     res.send();
+       // }else{
+       //     res.write("<div>Something went Wrong</div>");
+       //     res.send();
+       // }
+    });
+});
+
+function getProjectByName(query){
+    var projectByName = new Array;
+    userData.teams.forEach(this.teams, function(i, val){
+
+    });
+    userData.teams.forEach(userData.teams, function(i, valX){
+        $.each(valX.projects, function(i, valY){
+            if(valY['name'] == query){
+                projectByName.push(valY);
+            }
+        })
+    });
+    return projectByName;
+}
+
+function getProjectById(query){
+    var projectById = new Array;
+    $.each(userData.teams, function(i, valX){
+        $.each(valX.projects, function(i, valY){
+            if(valY['id'] == query){
+                projectByName.push(valY);
+            }
+        })
+    });
+    return projectById;
+}
+
+app.get('/app/addCollaborator', function(req, res, body){
+    var exampleProjectName = "Demo Project";
+    var exampleProjectId = "HxRKBtbH";
+    var nameResult = getProjectByName(exampleProjectName);
+    var idResult = getProjectById(exampleProjectId);
+    res.write("Result by Name: "+nameResult);
+    res.write("<br>");
+    res.write("Result by Id: "+idResult);
+});
+
+getAuthUrlToken(oauth2Client, function(AuthUrl){
+    console.log(AuthUrl);
 });
 
 app.listen(3000);
