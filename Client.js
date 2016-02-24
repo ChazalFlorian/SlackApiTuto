@@ -17,6 +17,8 @@
 var readline = require('readline');
 var request = require('request');
 var express = require('express');
+var jade = require('jade');
+var $ = require('jquery');
 
 var google = require('googleapis');
 var OAuth2Client = google.auth.OAuth2;
@@ -40,7 +42,7 @@ var rl = readline.createInterface({
     output: process.stdout
 });
 
-function getAccessToken(oauth2Client, callback) {
+function getAuthUrlToken(oauth2Client, callback) {
     // generate consent page url
     var url = oauth2Client.generateAuthUrl({
         access_type: 'offline', // will return a refresh token
@@ -52,19 +54,18 @@ function getAccessToken(oauth2Client, callback) {
             ] // can be a space-delimited string or an array of scopes
     });
     console.log('Visit the url: ', url);
-    rl.question('Enter the code here:', function(code) {
-        // request access token
+    callback(url);
+}
+
+function getAccessToken(code){
         oauth2Client.getToken(code, function(err, tokens) {
             //console.log(code);
             console.log(tokens.access_token);
             // set tokens to the client
             // TODO: tokens should be set by OAuth2 client.
             oauth2Client.setCredentials(tokens);
-            access_token = tokens.access_token;
             connectToFrame(tokens.access_token, user_Gmail);
-            callback(url);
         });
-    });
 }
 
 function connectToFrame(access_token, user_Gmail){
@@ -127,7 +128,9 @@ function commentSubject(fileId, appUrl, user_id, user_token, projectId, comments
 }
 
 function createFolder(){
+    request({
 
+    })
 }
 
 function addProject(){
@@ -151,29 +154,33 @@ function uploadFiles(){
 //});
 
 app.get('/', function(req, res){
-    var AuthUrl = getAccessToken(oauth2Client, function(url) {
-        return AuthUrl;
+    var AuthUrl = "";
+    getAuthUrlToken(oauth2Client, function(url) {
+        AuthUrl = url;
     });
     res.writeHead(200, {"Content-Type": "text/html"});
-    res.write("<span>Welcome Home!</span>");
-    request({
-        method: 'GET',
-        url: url,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: {
-
-        }
-    }, function(req, res, body){
-        console.log(res);
-    })
+    res.write("<span>Welcome Home!</span>" +
+        "Valid Token Demand at <a href=\""+AuthUrl+"\">Here !</a>");
 });
 
 app.get('/oauth/token', function(req, res, body){
     res.writeHead(200, {"Content-Type": "text/html"});
-    console.log(req.query['code']);
+    //console.log(req.query['code']);
+    getAccessToken(req.query['code']);
     res.write("<span>Vous allez etre redirigé d'ici quelques instants</span>");
+    res.redirect('/app');
+});
+
+
+app.get('/app', function(req, res, body){
+   res.writeHead(200, {'Content-Type': "text/html"});
+    res.write("<div>" +
+        "<p><a name=\"addProject\">Ajouter un projet</a></p>" +
+        "<p><a name=\"commentSubject\"> commenter</a></p>" +
+        "<p><a name=\"createFolder\"> créer un dossier</a></p>" +
+        "<p><a name=\"createProject\">créer un projet</a></p>" +
+        "<p><a name=\"uploadFiles\">uploader un ficheri</a></p>" +
+        "</div>");
 });
 
 app.listen(3000);
