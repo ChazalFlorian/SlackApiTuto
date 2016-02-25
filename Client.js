@@ -333,15 +333,15 @@ function getProjectById(query){
     return projectById;
 }
 
-function getFoldersByProjectId(id){
+function getFoldersByProjectId(id, folderId){
     var folders = [];
     request({
         method: 'POST',
-        url: 'https://api.frame.io/folders/'+id,
+        url: 'https://api.frame.io/folders/'+folderId,
         headers: {
         'Content-Type': 'application/json'
     },
-    body: "{  \"mid\": \""+user_id+"\",  \"t\": \""+user_token+"\",  \"aid\": \""+id+"\"}"
+    body: "{\"mid\": \""+user_id+"\", \"t\": \""+user_token+"\", \"aid\": \""+id+"\"}"
 }, function (error, response, body) {
         console.log('Status:', response.statusCode);
         console.log('Headers:', JSON.stringify(response.headers));
@@ -354,7 +354,8 @@ function getFoldersByProjectId(id){
 app.get('/app/project/:id', function(req, res, body){
     var id = req.params.id;
     project = getProjectById(id);
-    folders = getFoldersByProjectId(id);
+    console.log(project);
+    folders = getFoldersByProjectId(id, project[0]['root_folder_key']);
     res.render('project', {project: project, folders: folders});
 });
 
