@@ -1,16 +1,17 @@
 doctype html
 html
     head
-        link
+        link(rel="stylesheet" type="text/css" href="../assets/css/style.css")
     body
         h1 Mon interface
         div(class="app-container")
             div(class="teams-wrapper")
                 each team, index in userData.teams
                     div(class="team")
-                        p= team.name
+                        h2= team.name
                         div(class="projects-wrapper")
                             each project, indey in team.projects
                                 div(class="project")
                                     p= project.name
-            p= 'add a team'
+                            p= 'add a Project'
+                p= 'add a Team'

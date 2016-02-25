@@ -1,0 +1,46 @@
+*{
+    margin: 0;
+}
+
+h1, h2{
+    text-align: center;
+}
+
+.app-container{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #880000;
+}
+
+.app-container .teams-wrapper{
+    width: 90%;
+    margin: 5%;
+    background-color: #555500;
+    display: inline-block;
+}
+
+.app-container .teams-wrapper .team{
+    width: 95%;
+    margin: 2%;
+    background-color: aqua;
+    display: inline-block;
+}
+
+.app-container .teams-wrapper .team .projects-wrapper{
+    width: 100%;
+    background-color: blue;
+}
+
+.app-container .teams-wrapper .team .projects-wrapper .project{
+    width: 20%;
+    margin: 2%;
+    height: 160px;
+    display: inline-block;
+    background-color: coral;
+}
+
+.app-container .teams-wrapper .team .projects-wrapper .project p{
+    text-align: center;
+    margin-top: 20%;
+}
