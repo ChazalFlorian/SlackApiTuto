@@ -38,6 +38,7 @@ jsdom.env("http://localhost:3000/*", function(err, window) {
 
     var $ = require("jquery")(window);
 });
+app.set('view engine', 'jade');
 
 // Client ID and client secret are available at
 // https://code.google.com/apis/console
@@ -47,7 +48,7 @@ var REDIRECT_URL = 'http://localhost:3000/oAuth/token';
 var user_id = "";
 var user_token = "";
 var frameURL= "http://frame.io/?p=HxRKBtbH";
-var userData = "";
+var userData = [];
 
 var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 
@@ -110,7 +111,8 @@ function getUserInfosFromFrame(user_id, user_token){
         //console.log("Status:", res.statusCode);
         //console.log("Headers:", JSON.stringify(res.headers));
         //console.log("Response:", body);
-        userData = body;
+        userData = JSON.parse(body)['user'];
+        //console.log(userData);
     });
 }
 
@@ -213,7 +215,8 @@ function checkUser($mail, callback){
 }
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + "/templates/index.html");
+    res.render('index', {message: "Welcome Home"});
+    //res.sendFile(__dirname + "/views/index.html");
 });
 
 app.post('/email', function(req, res){
@@ -279,28 +282,34 @@ app.get('/app/addTeam', function(req, res, body){
 
 function getProjectByName(query){
     var projectByName = new Array;
-    userData.teams.forEach(this.teams, function(i, val){
-
-    });
-    userData.teams.forEach(userData.teams, function(i, valX){
-        $.each(valX.projects, function(i, valY){
-            if(valY['name'] == query){
-                projectByName.push(valY);
+    //console.log(userData['teams']);
+    //console.log(userData['teams'][0]['projects'][0]);
+    for (var valX in userData['teams']){
+        for (var valY in userData['teams'][valX]['projects']){
+            if(userData['teams'][valX]['projects'][valY]['name'] == query){
+                projectByName.push(userData['teams'][valX]['projects'][valY]);
             }
-        })
-    });
+        }
+    }
+    console.log(projectByName);
     return projectByName;
+}
+
+function getAllProject(){
+    var projects = new Array;
+
 }
 
 function getProjectById(query){
     var projectById = new Array;
-    $.each(userData.teams, function(i, valX){
-        $.each(valX.projects, function(i, valY){
-            if(valY['id'] == query){
-                projectByName.push(valY);
+    for (var valX in userData['teams']){
+        for (var valY in userData['teams'][valX]['projects']){
+            if(userData['teams'][valX]['projects'][valY]['id'] == query){
+                projectById.push(userData['teams'][valX]['projects'][valY]);
             }
-        })
-    });
+        }
+    }
+    //console.log(projectById);
     return projectById;
 }
 
@@ -309,9 +318,10 @@ app.get('/app/addCollaborator', function(req, res, body){
     var exampleProjectId = "HxRKBtbH";
     var nameResult = getProjectByName(exampleProjectName);
     var idResult = getProjectById(exampleProjectId);
-    res.write("Result by Name: "+nameResult);
+    res.write("Result by Name: "+nameResult[0]);
     res.write("<br>");
-    res.write("Result by Id: "+idResult);
+    res.write("Result by Id: "+idResult[0]);
+    res.send();
 });
 
 getAuthUrlToken(oauth2Client, function(AuthUrl){

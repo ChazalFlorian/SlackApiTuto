@@ -1,0 +1,13 @@
+doctype html
+html
+    head
+        script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+        script(src="../model/formLogin.js")
+    body
+        h1= message
+        form(name="login", method="POST", action="/email")
+        div.input
+            span.label Email
+            input(type="text", name="email")
+        div.actions
+            input(type="submit", name="submit")
