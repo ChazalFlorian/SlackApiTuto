@@ -333,7 +333,7 @@ function getProjectById(query){
     return projectById;
 }
 
-function getFoldersByProjectId(id, folderId){
+function getFoldersByProjectId(id, folderId, callback){
     var folders = [];
     request({
         method: 'POST',
@@ -343,20 +343,22 @@ function getFoldersByProjectId(id, folderId){
     },
     body: "{\"mid\": \""+user_id+"\", \"t\": \""+user_token+"\", \"aid\": \""+id+"\"}"
 }, function (error, response, body) {
-        console.log('Status:', response.statusCode);
-        console.log('Headers:', JSON.stringify(response.headers));
-        console.log('Response:', body);
+        //console.log('Status:', response.statusCode);
+        //console.log('Headers:', JSON.stringify(response.headers));
+        //console.log('Response:', body);
         folders = JSON.parse(body);
+        callback(folders);
     });
-    return folders;
 }
 
 app.get('/app/project/:id', function(req, res, body){
     var id = req.params.id;
-    project = getProjectById(id);
-    console.log(project);
-    folders = getFoldersByProjectId(id, project[0]['root_folder_key']);
-    res.render('project', {project: project, folders: folders});
+    var folders = [];
+    var project = getProjectById(id);
+    getFoldersByProjectId(id, project[0]['root_folder_key'], function(folders){
+        console.log(folders);
+        res.render('project', {project: project[0], folders: folders});
+    });
 });
 
 app.get('/app/add/collaborator', function(req, res, body){
