@@ -11,7 +11,7 @@ html
                         h2= team.name
                         div(class="projects-wrapper")
                             each project, indey in team.projects
-                                div(class="project")
+                                a(href="/app/project/#{project.id}"): div(class="project")
                                     p= project.name
-                            p= 'add a Project'
-                p= 'add a Team'
+                            p: a(href="/app/project/add")= 'add a Project'
+                p: a(href="/app/team/add")= 'add a Team'
