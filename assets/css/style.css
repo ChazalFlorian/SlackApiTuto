@@ -13,11 +13,55 @@ h1, h2{
     background-color: #880000;
 }
 
+.project-container{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #880000;
+}
+
+.project-container .items-wrapper{
+    width:80%;
+    margin: 5%;
+    background-color: #555500;
+    display: inline-block;
+}
+
 .app-container .teams-wrapper{
     width: 90%;
     margin: 5%;
     background-color: #555500;
     display: inline-block;
+}
+
+.project-container .items-wrapper .item{
+    width: 40%;
+    margin: 2%;
+    background-color: aqua;
+    display: inline-block;
+}
+
+.project-container .items-wrapper .item h4{
+    text-align: center;
+}
+
+.project-container .items-wrapper .item .img-container{
+    width: 50%;
+    height: 50%;
+}
+
+.project-container .items-wrapper .item .img-container img{
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.project-container .items-wrapper .folder{
+        background-color: aqua;
+    background-color: coral;
+}
+
+.project-container .items-wrapper .file{
+
 }
 
 .app-container .teams-wrapper .team{

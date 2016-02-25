@@ -1,6 +1,19 @@
 doctype html
 html
     head
-
+        link(rel="stylesheet" type="text/css" href="../../assets/css/style.css")
     body
         h1= project.name
+        div(class="project-container")
+            div(class="items-wrapper")
+                each folder, index in folders.folders
+                    a(href="/app/project/#{project.id}/folder/#{folder.id}"): div(class="item folder")
+                        h2= folder.name
+                        p= "Eléments: " + folder.item_count
+                each file, index in folders.file_references
+                    div(class="item file")
+                        h4= file.name
+                        div(class="img-container")
+                            img(src=file.cover, class="cover")
+            p: a(href="/app/project/#{project.id}/add/folder")= 'add a Folder'
+            p: a(href="/app/project/#{project.id}/add/user")= 'add a Collaborator'

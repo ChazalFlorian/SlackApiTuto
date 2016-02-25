@@ -90,9 +90,9 @@ function connectToFrame(access_token, user_Gmail){
         },
         body: "{  \"email\": \""+user_Gmail+"\",  \"access_token\": \""+access_token+"\"}"
         }, function (error, response, body) {
-            console.log('Status:', response.statusCode);
-            console.log('Headers:', JSON.stringify(response.headers));
-            console.log('Response:', body);
+            //console.log('Status:', response.statusCode);
+            //console.log('Headers:', JSON.stringify(response.headers));
+            //console.log('Response:', body);
             body = JSON.parse(body);
             user_id = body['x'];
             user_token = body['y'];
@@ -109,9 +109,9 @@ function connectToFrameWithoutGoogle(){
     },
     body: "{  \"a\": \"cedric.delport@woowyourlife.com\",  \"b\": \"mononoke01\"}"
 }, function (error, response, body) {
-        console.log('Status:', response.statusCode);
-        console.log('Headers:', JSON.stringify(response.headers));
-        console.log('Response:', body);
+        //console.log('Status:', response.statusCode);
+        //console.log('Headers:', JSON.stringify(response.headers));
+        //console.log('Response:', body);
         body = JSON.parse(body);
         user_id = body['x'];
         user_token = body['y'];
@@ -240,7 +240,6 @@ app.get('/', function(req, res){
 });
 
 app.get('/frame', function(req, res){
-    console.log(req);
     if(req.query.length != 0){
         connectToFrameWithoutGoogle(req.params.email, req.params.password);
         res.redirect('/app');
@@ -334,7 +333,6 @@ function getProjectById(query){
 }
 
 function getFoldersByProjectId(id, folderId, callback){
-    var folders = [];
     request({
         method: 'POST',
         url: 'https://api.frame.io/folders/'+folderId,
@@ -346,18 +344,16 @@ function getFoldersByProjectId(id, folderId, callback){
         //console.log('Status:', response.statusCode);
         //console.log('Headers:', JSON.stringify(response.headers));
         //console.log('Response:', body);
-        folders = JSON.parse(body);
-        callback(folders);
+        callback(JSON.parse(body));
     });
 }
 
 app.get('/app/project/:id', function(req, res, body){
     var id = req.params.id;
-    var folders = [];
     var project = getProjectById(id);
     getFoldersByProjectId(id, project[0]['root_folder_key'], function(folders){
-        console.log(folders);
-        res.render('project', {project: project[0], folders: folders});
+        console.log(folders['folder']);
+        res.render('project', {project: project[0], folders: folders['folder']});
     });
 });
 
