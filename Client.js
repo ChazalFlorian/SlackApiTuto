@@ -28,6 +28,7 @@ var plus = google.plus('v1');
 //var userinfo = google.userinfo;
 var user_Gmail = 'chazal.florian@gmail.com';
 var app = express();
+//not sure about this
 app.use(bodyParser.urlencoded({ extended : true }));
 app.use(express.static(__dirname));
 jsdom.env("http://localhost:3000/*", function(err, window) {
@@ -97,6 +98,25 @@ function connectToFrame(access_token, user_Gmail){
             user_token = body['y'];
             getUserInfosFromFrame(user_id, user_token);
         })
+}
+
+function connectToFrameWithoutGoogle(){
+    request({
+        method: 'POST',
+        url: 'https://api.frame.io/login',
+        headers: {
+        'Content-Type': 'application/json'
+    },
+    body: "{  \"a\": \"cedric.delport@woowyourlife.com\",  \"b\": \"mononoke01\"}"
+}, function (error, response, body) {
+        console.log('Status:', response.statusCode);
+        console.log('Headers:', JSON.stringify(response.headers));
+        console.log('Response:', body);
+        body = JSON.parse(body);
+        user_id = body['x'];
+        user_token = body['y'];
+        getUserInfosFromFrame(user_id, user_token);
+    });
 }
 
 function getUserInfosFromFrame(user_id, user_token){
@@ -219,6 +239,16 @@ app.get('/', function(req, res){
     //res.sendFile(__dirname + "/views/index.html");
 });
 
+app.get('/frame', function(req, res){
+    console.log(req);
+    if(req.query.length != 0){
+        connectToFrameWithoutGoogle(req.params.email, req.params.password);
+        res.redirect('/app');
+    }else{
+        res.render('login');
+    }
+});
+
 app.post('/email', function(req, res){
     var email = req.body.email;
     var AuthUrl = "";
@@ -257,7 +287,7 @@ app.get('/app', function(req, res, body){
    res.render('app', {userData: userData});
 });
 
-app.get('/app/addTeam', function(req, res, body){
+app.get('/app/team/add', function(req, res, body){
     addTeam('test', function(status){
         console.log(status);
         //if(status === true){
@@ -303,7 +333,32 @@ function getProjectById(query){
     return projectById;
 }
 
-app.get('/app/addCollaborator', function(req, res, body){
+function getFoldersByProjectId(id){
+    var folders = [];
+    request({
+        method: 'POST',
+        url: 'https://api.frame.io/folders/'+id,
+        headers: {
+        'Content-Type': 'application/json'
+    },
+    body: "{  \"mid\": \""+user_id+"\",  \"t\": \""+user_token+"\",  \"aid\": \""+id+"\"}"
+}, function (error, response, body) {
+        console.log('Status:', response.statusCode);
+        console.log('Headers:', JSON.stringify(response.headers));
+        console.log('Response:', body);
+        folders = JSON.parse(body);
+    });
+    return folders;
+}
+
+app.get('/app/project/:id', function(req, res, body){
+    var id = req.params.id;
+    project = getProjectById(id);
+    folders = getFoldersByProjectId(id);
+    res.render('project', {project: project, folders: folders});
+});
+
+app.get('/app/add/collaborator', function(req, res, body){
     var exampleProjectName = "Demo Project";
     var exampleProjectId = "HxRKBtbH";
     var nameResult = getProjectByName(exampleProjectName);
