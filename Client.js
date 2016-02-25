@@ -254,17 +254,7 @@ app.get('/oauth/token', function(req, res, body){
 
 
 app.get('/app', function(req, res, body){
-   res.writeHead(200, {'Content-Type': "text/html"});
-    res.write("<div>" +
-        "<p><a href=\"/app/addCollaborator\">Ajouter un Collaborateur</a></p>" +
-        "<p><a href=\"/app/addTeam\">Ajouter une equipe</a></p>" +
-        "<p><a name=\"addProject\">Ajouter un projet</a></p>" +
-        "<p><a name=\"commentSubject\"> commenter</a></p>" +
-        "<p><a name=\"createFolder\"> créer un dossier</a></p>" +
-        "<p><a name=\"createProject\">créer un projet</a></p>" +
-        "<p><a name=\"uploadFiles\">uploader un fichier</a></p>" +
-        "</div>");
-    res.send();
+   res.render('app', {userData: userData});
 });
 
 app.get('/app/addTeam', function(req, res, body){
